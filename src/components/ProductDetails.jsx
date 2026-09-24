@@ -17,7 +17,7 @@ export default function ProductDetails({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/40 px-4 py-6">
       <div className="relative grid w-full max-w-3xl overflow-hidden rounded-xl bg-background md:grid-cols-2">
         <button
           onClick={onClose}
@@ -87,3 +87,4 @@ export default function ProductDetails({
     </div>
   );
 }
+
