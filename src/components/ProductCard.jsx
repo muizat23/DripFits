@@ -38,7 +38,7 @@ export default function ProductCard({
         </div>
 
         <button
-          onClick={() => onViewProduct(product)}
+          onClick={() => onAddToCart(product)}
           className="mt-4 w-full rounded-md bg-brand px-4 py-3 text-sm font-medium text-white transition hover:bg-brand-dark"
         >
           Add to Cart
