@@ -1,9 +1,21 @@
 import { useState } from "react";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+} from "react-router-dom";
+
 import Navbar from "./components/Navbar";
 import Shop from "./components/Shop";
 import Cart from "./components/Cart";
 import ProductDetails from "./components/ProductDetails";
 import Checkout from "./components/Checkout";
+import Categories from "./components/Categories";
+import About from "./components/About";
+import Account from "./components/Account";
+import Search from "./components/Search";
+
+import { supabase } from "./lib/supabase";
 
 function App() {
   const [cart, setCart] = useState([]);
@@ -62,22 +74,98 @@ function App() {
     );
   };
 
+  const handleCheckout = async () => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    setCartOpen(false);
+
+    if (user) {
+      setCheckoutOpen(true);
+    } else {
+      window.location.href = "/account";
+    }
+  };
+
   const cartCount = cart.reduce(
     (total, item) => total + item.quantity,
     0
   );
 
   return (
-    <>
+    <BrowserRouter>
       <Navbar
         cartCount={cartCount}
         onCartClick={() => setCartOpen(true)}
       />
 
-      <Shop
-        onAddToCart={addToCart}
-        onViewProduct={setSelectedProduct}
-      />
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <Shop
+              onAddToCart={addToCart}
+              onViewProduct={setSelectedProduct}
+            />
+          }
+        />
+
+        <Route
+          path="/shop"
+          element={
+            <Shop
+              onAddToCart={addToCart}
+              onViewProduct={setSelectedProduct}
+            />
+          }
+        />
+
+        <Route
+          path="/categories"
+          element={
+            <Categories
+              onAddToCart={addToCart}
+              onViewProduct={setSelectedProduct}
+            />
+          }
+        />
+
+        <Route
+          path="/about"
+          element={<About />}
+        />
+
+        <Route
+          path="/contact"
+          element={
+            <div className="mx-auto max-w-7xl px-6 py-16">
+              <h1 className="text-3xl font-semibold text-heading">
+                Contact Us
+              </h1>
+
+              <p className="mt-3 text-body">
+                Get in touch with DripFits.
+              </p>
+            </div>
+          }
+        />
+
+        <Route
+          path="/account"
+          element={<Account />}
+        />
+
+        <Route
+          path="/search"
+          element={
+            <Search
+              onAddToCart={addToCart}
+              onViewProduct={setSelectedProduct}
+            />
+          }
+        />
+      </Routes>
 
       {cartOpen && (
         <Cart
@@ -86,10 +174,7 @@ function App() {
           onDecrease={decreaseQuantity}
           onRemove={removeFromCart}
           onClose={() => setCartOpen(false)}
-          onCheckout={() => {
-            setCartOpen(false);
-            setCheckoutOpen(true);
-          }}
+          onCheckout={handleCheckout}
         />
       )}
 
@@ -102,16 +187,16 @@ function App() {
       )}
 
       {checkoutOpen && (
-  <Checkout
-    cart={cart}
-    onClose={() => setCheckoutOpen(false)}
-    onOrderComplete={() => {
-      setCart([]);
-      setCheckoutOpen(false);
-    }}
-  />
-)}
-    </>
+        <Checkout
+          cart={cart}
+          onClose={() => setCheckoutOpen(false)}
+          onOrderComplete={() => {
+            setCart([]);
+            setCheckoutOpen(false);
+          }}
+        />
+      )}
+    </BrowserRouter>
   );
 }
 
