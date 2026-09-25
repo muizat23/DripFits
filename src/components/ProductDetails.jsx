@@ -5,9 +5,18 @@ export default function ProductDetails({
   onAddToCart,
   onClose,
 }) {
-  const [selectedSize, setSelectedSize] = useState("M");
+  const defaultSizes = ["S", "M", "L", "XL", "XXL"];
+
+  const sizes = product.sizes || defaultSizes;
+
+  const [selectedSize, setSelectedSize] = useState("");
 
   const handleAddToCart = () => {
+    if (!selectedSize) {
+      alert("Please select a size.");
+      return;
+    }
+
     onAddToCart({
       ...product,
       size: selectedSize,
@@ -17,74 +26,72 @@ export default function ProductDetails({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/40 px-4 py-6">
-      <div className="relative grid w-full max-w-3xl overflow-hidden rounded-xl bg-background md:grid-cols-2">
-        <button
-          onClick={onClose}
-          className="absolute right-4 top-4 z-10 text-2xl text-body hover:text-heading"
-          aria-label="Close product details"
-        >
-          ×
-        </button>
-
-        <div className="aspect-[3/4] bg-surface">
-          <img
-            src={product.image}
-            alt={product.name}
-            className="h-full w-full object-cover"
-          />
-        </div>
-
-        <div className="flex flex-col justify-center p-6 md:p-8">
-          <p className="text-sm uppercase tracking-widest text-brand">
-            {product.category}
-          </p>
-
-          <h2 className="mt-2 text-2xl font-semibold text-heading">
-            {product.name}
-          </h2>
-
-          <p className="mt-3 text-lg text-heading">
-            ₦{product.price.toLocaleString()}
-          </p>
-
-          <p className="mt-5 leading-7 text-body">
-            A versatile everyday piece designed for comfort and easy styling.
-            Pair it with your favourite essentials for a simple, effortless
-            look.
-          </p>
-
-          <div className="mt-6">
-            <p className="mb-3 text-sm font-medium text-heading">
-              Select size
-            </p>
-
-            <div className="flex flex-wrap gap-2">
-              {["S", "M", "L", "XL", "XXL"].map((size) => (
-                <button
-                  key={size}
-                  onClick={() => setSelectedSize(size)}
-                  className={
-                    selectedSize === size
-                      ? "rounded-md bg-brand px-4 py-2 text-sm text-white"
-                      : "rounded-md border border-border px-4 py-2 text-sm text-heading hover:bg-surface"
-                  }
-                >
-                  {size}
-                </button>
-              ))}
-            </div>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+      <div className="max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-xl bg-background">
+        <div className="grid md:grid-cols-2">
+          <div className="p-4">
+            <img
+              src={product.image}
+              alt={product.name}
+              className="h-[400px] w-full rounded-lg object-cover"
+            />
           </div>
 
-          <button
-            onClick={handleAddToCart}
-            className="mt-8 w-full rounded-md bg-brand px-4 py-3 text-sm font-medium text-white hover:bg-brand-dark"
-          >
-            Add to Cart
-          </button>
+          <div className="p-6">
+            <button
+              onClick={onClose}
+              className="mb-6 text-sm text-body hover:text-heading"
+            >
+              Close
+            </button>
+
+            <p className="text-sm uppercase tracking-widest text-brand">
+              {product.category}
+            </p>
+
+            <h2 className="mt-2 text-2xl font-semibold text-heading">
+              {product.name}
+            </h2>
+
+            <p className="mt-4 text-xl font-semibold text-heading">
+              ₦{product.price.toLocaleString()}
+            </p>
+
+            <p className="mt-4 text-body">
+              Quality pieces selected for your everyday style.
+            </p>
+
+            <div className="mt-8">
+              <p className="mb-3 text-sm font-medium text-heading">
+                Select Size
+              </p>
+
+              <div className="flex flex-wrap gap-2">
+                {sizes.map((size) => (
+                  <button
+                    key={size}
+                    onClick={() => setSelectedSize(size)}
+                    className={`rounded-md border px-4 py-2 text-sm ${
+                      selectedSize === size
+                        ? "border-brand bg-brand text-white"
+                        : "border-border text-heading hover:border-brand"
+                    }`}
+                  >
+                    {size}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <button
+              onClick={handleAddToCart}
+              className="mt-8 w-full rounded-md bg-brand px-4 py-3 font-medium text-white hover:bg-brand-dark"
+            >
+              Add to Cart
+            </button>
+          </div>
         </div>
       </div>
     </div>
   );
 }
-

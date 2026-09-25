@@ -27,9 +27,11 @@ export default function Account() {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-    });
+    } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setUser(session?.user ?? null);
+      }
+    );
 
     return () => {
       subscription.unsubscribe();
@@ -52,32 +54,65 @@ export default function Account() {
     setMessage("");
 
     if (isLogin) {
-      const { error } = await supabase.auth.signInWithPassword({
-        email: formData.email,
-        password: formData.password,
-      });
+      const { data, error } =
+        await supabase.auth.signInWithPassword({
+          email: formData.email,
+          password: formData.password,
+        });
 
       if (error) {
         setMessage(error.message);
-      } else {
-        setMessage("Logged in successfully!");
+        setLoading(false);
+        return;
       }
+
+      // Immediately set the logged-in user
+      setUser(data.user);
+
+      // Check if checkout was requested
+      const checkoutRequested =
+        localStorage.getItem("dripfits_checkout") === "true";
+
+      if (checkoutRequested) {
+  localStorage.removeItem("dripfits_checkout");
+  window.location.href = "/checkout";
+  return;
+}
+
+
+      setMessage("Logged in successfully!");
     } else {
-      const { error } = await supabase.auth.signUp({
-        email: formData.email,
-        password: formData.password,
-        options: {
-          data: {
-            full_name: formData.name,
+      const { data, error } =
+        await supabase.auth.signUp({
+          email: formData.email,
+          password: formData.password,
+          options: {
+            data: {
+              full_name: formData.name,
+            },
           },
-        },
-      });
+        });
 
       if (error) {
         setMessage(error.message);
-      } else {
-        setMessage("Account created successfully!");
+        setLoading(false);
+        return;
       }
+
+      setUser(data.user);
+
+      const checkoutRequested =
+        localStorage.getItem("dripfits_checkout") === "true";
+
+      if (checkoutRequested) {
+        setTimeout(() => {
+          window.location.href = "/";
+        }, 300);
+
+        return;
+      }
+
+      setMessage("Account created successfully!");
     }
 
     setLoading(false);
@@ -85,6 +120,7 @@ export default function Account() {
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
+
     setUser(null);
     setMessage("");
   };
@@ -136,7 +172,9 @@ export default function Account() {
         </p>
 
         <h1 className="mt-3 text-3xl font-semibold text-heading">
-          {isLogin ? "Welcome back" : "Create an account"}
+          {isLogin
+            ? "Welcome back"
+            : "Create an account"}
         </h1>
 
         <p className="mt-3 text-sm text-body">
@@ -146,7 +184,10 @@ export default function Account() {
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="mt-8 space-y-5">
+      <form
+        onSubmit={handleSubmit}
+        className="mt-8 space-y-5"
+      >
         {!isLogin && (
           <div>
             <label className="mb-2 block text-sm text-heading">

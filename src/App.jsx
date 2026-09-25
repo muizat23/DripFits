@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   BrowserRouter,
   Routes,
   Route,
+  useNavigate,
 } from "react-router-dom";
 
 import Navbar from "./components/Navbar";
@@ -17,28 +18,52 @@ import Search from "./components/Search";
 
 import { supabase } from "./lib/supabase";
 
-function App() {
-  const [cart, setCart] = useState([]);
+function AppContent() {
+  const navigate = useNavigate();
+
+  const [cart, setCart] = useState(() => {
+    const savedCart = localStorage.getItem("dripfits_cart");
+
+    return savedCart ? JSON.parse(savedCart) : [];
+  });
+
   const [cartOpen, setCartOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const [checkoutOpen, setCheckoutOpen] = useState(false);
+
+  useEffect(() => {
+    localStorage.setItem(
+      "dripfits_cart",
+      JSON.stringify(cart)
+    );
+  }, [cart]);
 
   const addToCart = (product) => {
     setCart((currentCart) => {
       const existingProduct = currentCart.find(
         (item) =>
-          item.id === product.id && item.size === product.size
+          item.id === product.id &&
+          item.size === product.size
       );
 
       if (existingProduct) {
         return currentCart.map((item) =>
-          item.id === product.id && item.size === product.size
-            ? { ...item, quantity: item.quantity + 1 }
+          item.id === product.id &&
+          item.size === product.size
+            ? {
+                ...item,
+                quantity: item.quantity + 1,
+              }
             : item
         );
       }
 
-      return [...currentCart, { ...product, quantity: 1 }];
+      return [
+        ...currentCart,
+        {
+          ...product,
+          quantity: 1,
+        },
+      ];
     });
 
     setCartOpen(true);
@@ -48,7 +73,10 @@ function App() {
     setCart((currentCart) =>
       currentCart.map((item) =>
         item.id === id && item.size === size
-          ? { ...item, quantity: item.quantity + 1 }
+          ? {
+              ...item,
+              quantity: item.quantity + 1,
+            }
           : item
       )
     );
@@ -59,7 +87,10 @@ function App() {
       currentCart
         .map((item) =>
           item.id === id && item.size === size
-            ? { ...item, quantity: item.quantity - 1 }
+            ? {
+                ...item,
+                quantity: item.quantity - 1,
+              }
             : item
         )
         .filter((item) => item.quantity > 0)
@@ -69,7 +100,11 @@ function App() {
   const removeFromCart = (id, size) => {
     setCart((currentCart) =>
       currentCart.filter(
-        (item) => !(item.id === id && item.size === size)
+        (item) =>
+          !(
+            item.id === id &&
+            item.size === size
+          )
       )
     );
   };
@@ -82,9 +117,14 @@ function App() {
     setCartOpen(false);
 
     if (user) {
-      setCheckoutOpen(true);
+      navigate("/checkout");
     } else {
-      window.location.href = "/account";
+      localStorage.setItem(
+        "dripfits_checkout",
+        "true"
+      );
+
+      navigate("/account");
     }
   };
 
@@ -94,7 +134,7 @@ function App() {
   );
 
   return (
-    <BrowserRouter>
+    <>
       <Navbar
         cartCount={cartCount}
         onCartClick={() => setCartOpen(true)}
@@ -165,6 +205,21 @@ function App() {
             />
           }
         />
+
+        <Route
+          path="/checkout"
+          element={
+            <Checkout
+              cart={cart}
+              onClose={() => navigate("/")}
+              onOrderComplete={() => {
+                setCart([]);
+                localStorage.removeItem("dripfits_cart");
+                navigate("/");
+              }}
+            />
+          }
+        />
       </Routes>
 
       {cartOpen && (
@@ -185,17 +240,14 @@ function App() {
           onClose={() => setSelectedProduct(null)}
         />
       )}
+    </>
+  );
+}
 
-      {checkoutOpen && (
-        <Checkout
-          cart={cart}
-          onClose={() => setCheckoutOpen(false)}
-          onOrderComplete={() => {
-            setCart([]);
-            setCheckoutOpen(false);
-          }}
-        />
-      )}
+function App() {
+  return (
+    <BrowserRouter>
+      <AppContent />
     </BrowserRouter>
   );
 }

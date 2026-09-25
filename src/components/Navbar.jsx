@@ -43,6 +43,10 @@ export default function Navbar({ cartCount, onCartClick }) {
               <Link to="/t-shirts" className="hover:text-brand">
                 T-Shirts
               </Link>
+
+              <Link to="/shop?category=Footwears" className="hover:text-brand">
+                Footwears
+              </Link>
             </div>
 
             <button
@@ -128,6 +132,10 @@ export default function Navbar({ cartCount, onCartClick }) {
               <Link to="/t-shirts" onClick={closeMenu}>
                 T-Shirts
               </Link>
+
+              <Link to="/shop?category=Footwears" onClick={closeMenu}>
+  Footwears
+</Link>
             </div>
           </div>
         )}

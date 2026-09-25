@@ -1,14 +1,27 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import products from "../data/products";
 import ProductCard from "./ProductCard";
 
-export default function Shop({ onAddToCart, onViewProduct }) {  
-  const [category, setCategory] = useState("All");
+export default function Shop({ onAddToCart, onViewProduct }) {
+  const [searchParams] = useSearchParams();
+
+  const [category, setCategory] = useState(
+    searchParams.get("category") || "All"
+  );
+
+  useEffect(() => {
+    const categoryFromUrl = searchParams.get("category");
+
+    setCategory(categoryFromUrl || "All");
+  }, [searchParams]);
 
   const filteredProducts =
     category === "All"
       ? products
-      : products.filter((product) => product.category === category);
+      : products.filter(
+          (product) => product.category === category
+        );
 
   return (
     <section className="mx-auto max-w-7xl px-6 py-12">
@@ -28,7 +41,7 @@ export default function Shop({ onAddToCart, onViewProduct }) {
       </div>
 
       <div className="mb-8 flex flex-wrap gap-3">
-        {["All", "Men", "Unisex"].map((item) => (
+        {["All", "Men", "Unisex", "Footwears"].map((item) => (
           <button
             key={item}
             onClick={() => setCategory(item)}
@@ -43,13 +56,13 @@ export default function Shop({ onAddToCart, onViewProduct }) {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 gap-x-5 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
         {filteredProducts.map((product) => (
           <ProductCard
-          key={product.id}
-          product={product}
-          onAddToCart={onAddToCart}
-          onViewProduct={onViewProduct}
+            key={product.id}
+            product={product}
+            onAddToCart={onAddToCart}
+            onViewProduct={onViewProduct}
           />
         ))}
       </div>
