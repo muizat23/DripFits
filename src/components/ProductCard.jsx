@@ -4,7 +4,7 @@ export default function ProductCard({
   onViewProduct,
 }) {
   return (
-    <article className="group">
+    <article className="group flex h-full flex-col">
       <div className="relative aspect-[3/4] overflow-hidden rounded-lg bg-surface">
         <img
           src={product.image}
@@ -17,9 +17,9 @@ export default function ProductCard({
         </span>
       </div>
 
-      <div className="pt-4">
-        <div className="flex items-start justify-between gap-4">
-          <div>
+      <div className="flex flex-1 flex-col pt-4">
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
             <h2 className="text-base font-medium text-heading">
               {product.name}
             </h2>
@@ -31,7 +31,7 @@ export default function ProductCard({
 
           <button
             onClick={() => onViewProduct(product)}
-            className="text-sm text-body underline-offset-4 hover:text-brand hover:underline"
+            className="shrink-0 text-sm text-body underline-offset-4 hover:text-brand hover:underline"
           >
             View
           </button>
@@ -39,7 +39,7 @@ export default function ProductCard({
 
         <button
           onClick={() => onAddToCart(product)}
-          className="mt-4 w-full rounded-md bg-brand px-4 py-3 text-sm font-medium text-white transition hover:bg-brand-dark"
+          className="mt-auto pt-4 w-full rounded-md bg-brand px-4 py-3 text-sm font-medium text-white transition hover:bg-brand-dark"
         >
           Add to Cart
         </button>
