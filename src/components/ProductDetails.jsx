@@ -5,38 +5,64 @@ export default function ProductDetails({
   onAddToCart,
   onClose,
 }) {
-  const defaultSizes = ["S", "M", "L", "XL", "XXL"];
-
-  const sizes = product.sizes || defaultSizes;
-
   const [selectedSize, setSelectedSize] = useState("");
+  const [selectedImage, setSelectedImage] = useState(product.image);
+
+  const productImages = product.images || [product.image];
 
   const handleAddToCart = () => {
-    if (!selectedSize) {
+    if (product.sizes && !selectedSize) {
       alert("Please select a size.");
       return;
     }
 
     onAddToCart({
       ...product,
-      size: selectedSize,
+      ...(product.sizes ? { size: selectedSize } : {}),
     });
 
     onClose();
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-xl bg-background">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-black/50 p-4">
+      <div className="mx-auto min-h-[90vh] w-full max-w-5xl rounded-xl bg-background">
         <div className="grid md:grid-cols-2">
+          
+          {/* Images */}
           <div className="p-4">
-            <img
-              src={product.image}
-              alt={product.name}
-              className="h-[400px] w-full rounded-lg object-cover"
-            />
+            <div className="overflow-hidden rounded-lg bg-surface">
+              <img
+                src={selectedImage}
+                alt={product.name}
+                className="h-[400px] w-full object-cover"
+              />
+            </div>
+
+            {productImages.length > 1 && (
+              <div className="mt-4 grid grid-cols-5 gap-2">
+                {productImages.map((image, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setSelectedImage(image)}
+                    className={`overflow-hidden rounded-md border-2 ${
+                      selectedImage === image
+                        ? "border-brand"
+                        : "border-transparent"
+                    }`}
+                  >
+                    <img
+                      src={image}
+                      alt={`${product.name} ${index + 1}`}
+                      className="h-20 w-full object-cover"
+                    />
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
+          {/* Product Info */}
           <div className="p-6">
             <button
               onClick={onClose}
@@ -61,27 +87,29 @@ export default function ProductDetails({
               Quality pieces selected for your everyday style.
             </p>
 
-            <div className="mt-8">
-              <p className="mb-3 text-sm font-medium text-heading">
-                Select Size
-              </p>
+            {product.sizes && (
+              <div className="mt-8">
+                <p className="mb-3 text-sm font-medium text-heading">
+                  Select Size
+                </p>
 
-              <div className="flex flex-wrap gap-2">
-                {sizes.map((size) => (
-                  <button
-                    key={size}
-                    onClick={() => setSelectedSize(size)}
-                    className={`rounded-md border px-4 py-2 text-sm ${
-                      selectedSize === size
-                        ? "border-brand bg-brand text-white"
-                        : "border-border text-heading hover:border-brand"
-                    }`}
-                  >
-                    {size}
-                  </button>
-                ))}
+                <div className="flex flex-wrap gap-2">
+                  {product.sizes.map((size) => (
+                    <button
+                      key={size}
+                      onClick={() => setSelectedSize(size)}
+                      className={
+                        selectedSize === size
+                          ? "rounded-md border border-brand bg-brand px-4 py-2 text-sm text-white"
+                          : "rounded-md border border-border px-4 py-2 text-sm text-heading hover:border-brand"
+                      }
+                    >
+                      {size}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
             <button
               onClick={handleAddToCart}

@@ -15,6 +15,7 @@ import Categories from "./components/Categories";
 import About from "./components/About";
 import Account from "./components/Account";
 import Search from "./components/Search";
+import Footer from "./components/Footer";
 
 import { supabase } from "./lib/supabase";
 
@@ -196,17 +197,7 @@ function AppContent() {
           element={<Account />}
         />
 
-        <Route
-          path="/search"
-          element={
-            <Search
-              onAddToCart={addToCart}
-              onViewProduct={setSelectedProduct}
-            />
-          }
-        />
-
-        <Route
+                <Route
           path="/checkout"
           element={
             <Checkout
@@ -221,6 +212,8 @@ function AppContent() {
           }
         />
       </Routes>
+
+      <Footer />
 
       {cartOpen && (
         <Cart
