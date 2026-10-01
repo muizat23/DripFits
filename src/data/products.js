@@ -61,6 +61,7 @@ const products = [
     roundNeck4,
     roundNeck5,
   ],
+  sizes: ["S", "M", "L", "XL", "XXL"],
 },
   {
   id: 4,
