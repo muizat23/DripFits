@@ -1,4 +1,3 @@
-
 @import "tailwindcss";
 
 @theme {
@@ -28,4 +27,20 @@
   --text-2xl: 1.5rem;
   --text-3xl: 1.875rem;
   --text-4xl: 2.25rem;
+}
+
+/* Dark mode */
+.dark {
+  --color-background: #1b1512;
+  --color-surface: #271e1a;
+
+  --color-heading: #f7eee8;
+  --color-body: #c9bab1;
+  --color-muted: #9d8d84;
+
+  --color-border: #3a2d27;
+
+  --color-brand: #a98778;
+  --color-brand-dark: #846254;
+  --color-brand-light: #c2a69a;
 }

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   Search,
@@ -6,45 +6,80 @@ import {
   ShoppingBag,
   Menu,
   X,
+  Moon,
+  Sun,
 } from "lucide-react";
 import logo from "../assets/images/dripfit.jpeg";
 
 export default function Navbar({ cartCount, onCartClick }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [darkMode, setDarkMode] = useState(() => {
+    return localStorage.getItem("dripfits_theme") === "dark";
+  });
 
   const closeMenu = () => {
     setMenuOpen(false);
   };
 
+  useEffect(() => {
+    document.documentElement.classList.toggle(
+      "dark",
+      darkMode
+    );
+
+    localStorage.setItem(
+      "dripfits_theme",
+      darkMode ? "dark" : "light"
+    );
+  }, [darkMode]);
+
   return (
     <header className="border-b border-border bg-background">
       <nav className="mx-auto max-w-7xl px-4 py-4">
         <div className="grid grid-cols-[1fr_auto_1fr] items-center">
-          
+
           {/* Left - Categories / Mobile Menu */}
           <div className="justify-self-start">
             <div className="hidden items-center gap-7 text-sm text-heading md:flex">
-              <Link to="/men" className="hover:text-brand">
+              <Link
+                to="/men"
+                className="hover:text-brand"
+              >
                 Men
               </Link>
 
-              <Link to="/unisex" className="hover:text-brand">
+              <Link
+                to="/unisex"
+                className="hover:text-brand"
+              >
                 Unisex
               </Link>
 
-              <Link to="/shirts" className="hover:text-brand">
+              <Link
+                to="/shirts"
+                className="hover:text-brand"
+              >
                 Shirts
               </Link>
 
-              <Link to="/trousers" className="hover:text-brand">
+              <Link
+                to="/trousers"
+                className="hover:text-brand"
+              >
                 Trousers
               </Link>
 
-              <Link to="/t-shirts" className="hover:text-brand">
+              <Link
+                to="/t-shirts"
+                className="hover:text-brand"
+              >
                 T-Shirts
               </Link>
 
-              <Link to="/shop?category=Footwears" className="hover:text-brand">
+              <Link
+                to="/shop?category=Footwears"
+                className="hover:text-brand"
+              >
                 Footwears
               </Link>
             </div>
@@ -54,7 +89,11 @@ export default function Navbar({ cartCount, onCartClick }) {
               className="text-heading md:hidden"
               aria-label="Toggle menu"
             >
-              {menuOpen ? <X size={24} /> : <Menu size={24} />}
+              {menuOpen ? (
+                <X size={24} />
+              ) : (
+                <Menu size={24} />
+              )}
             </button>
           </div>
 
@@ -75,8 +114,9 @@ export default function Navbar({ cartCount, onCartClick }) {
             </span>
           </Link>
 
-          {/* Right - Search, Account, Cart */}
+          {/* Right - Search, Account, Dark Mode, Cart */}
           <div className="flex items-center gap-4 justify-self-end">
+
             <Link
               to="/search"
               className="text-heading hover:text-brand"
@@ -92,6 +132,22 @@ export default function Navbar({ cartCount, onCartClick }) {
             >
               <UserRound size={21} />
             </Link>
+
+            <button
+              onClick={() => setDarkMode(!darkMode)}
+              className="text-heading hover:text-brand"
+              aria-label={
+                darkMode
+                  ? "Switch to light mode"
+                  : "Switch to dark mode"
+              }
+            >
+              {darkMode ? (
+                <Sun size={21} />
+              ) : (
+                <Moon size={21} />
+              )}
+            </button>
 
             <button
               onClick={onCartClick}
@@ -113,29 +169,66 @@ export default function Navbar({ cartCount, onCartClick }) {
         {menuOpen && (
           <div className="mt-4 border-t border-border pt-4 md:hidden">
             <div className="flex flex-col gap-4 text-sm text-heading">
-              <Link to="/men" onClick={closeMenu}>
+
+              <Link
+                to="/men"
+                onClick={closeMenu}
+              >
                 Men
               </Link>
 
-              <Link to="/unisex" onClick={closeMenu}>
+              <Link
+                to="/unisex"
+                onClick={closeMenu}
+              >
                 Unisex
               </Link>
 
-              <Link to="/shirts" onClick={closeMenu}>
+              <Link
+                to="/shirts"
+                onClick={closeMenu}
+              >
                 Shirts
               </Link>
 
-              <Link to="/trousers" onClick={closeMenu}>
+              <Link
+                to="/trousers"
+                onClick={closeMenu}
+              >
                 Trousers
               </Link>
 
-              <Link to="/t-shirts" onClick={closeMenu}>
+              <Link
+                to="/t-shirts"
+                onClick={closeMenu}
+              >
                 T-Shirts
               </Link>
 
-              <Link to="/shop?category=Footwears" onClick={closeMenu}>
-  Footwears
-</Link>
+              <Link
+                to="/shop?category=Footwears"
+                onClick={closeMenu}
+              >
+                Footwears
+              </Link>
+
+              <button
+                onClick={() => {
+                  setDarkMode(!darkMode);
+                  closeMenu();
+                }}
+                className="flex items-center gap-3 text-left text-heading hover:text-brand"
+              >
+                {darkMode ? (
+                  <Sun size={20} />
+                ) : (
+                  <Moon size={20} />
+                )}
+
+                {darkMode
+                  ? "Light Mode"
+                  : "Dark Mode"}
+              </button>
             </div>
           </div>
         )}
